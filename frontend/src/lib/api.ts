@@ -41,7 +41,7 @@ export const apiService = {
     getOrders: (params?: any) => api.get("/orders", { params }),
     getOrder: (id: string) => api.get(`/orders/${id}`),
     assignAgent: (id: string, agentId: string) =>
-      api.post(`/orders/${id}/assign`, { agentId }),
+      api.patch(`/orders/${id}/assign`, { agentId }),
     autoAssign: (id: string) => api.post(`/orders/${id}/auto-assign`),
     updateStatus: (id: string, status: string, notes?: string) =>
       api.patch(`/orders/${id}/status`, { status, notes }),

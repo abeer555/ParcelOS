@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Select } from "@/components/ui/Select";
 import { TrackingTimeline } from "@/components/TrackingTimeline";
 import { ChargeBreakdownDisplay } from "@/components/ChargeBreakdown";
 import { apiService } from "@/lib/api";
@@ -33,6 +34,9 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
   const [order, setOrder] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
+  const [agents, setAgents] = useState<any[]>([]);
+  const [agentsLoading, setAgentsLoading] = useState(false);
+  const [selectedAgentId, setSelectedAgentId] = useState("");
   const { user } = useAuth();
 
   const fetchOrder = async () => {
@@ -52,6 +56,24 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
     fetchOrder();
   }, [params.id]);
 
+  useEffect(() => {
+    if (user?.role !== "ADMIN") return;
+
+    const fetchAgents = async () => {
+      setAgentsLoading(true);
+      try {
+        const res = await apiService.agents.getAgents();
+        setAgents(Array.isArray(res.data) ? res.data : []);
+      } catch (err: any) {
+        toast.error(err.response?.data?.message || "Failed to load agents");
+      } finally {
+        setAgentsLoading(false);
+      }
+    };
+
+    fetchAgents();
+  }, [user?.role]);
+
   const handleAutoAssign = async () => {
     setActionLoading(true);
     try {
@@ -60,6 +82,25 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
       await fetchOrder();
     } catch (err: any) {
       toast.error(err.response?.data?.message || "Assignment failed");
+    } finally {
+      setActionLoading(false);
+    }
+  };
+
+  const handleManualAssign = async () => {
+    if (!selectedAgentId) {
+      toast.error("Select an available agent first");
+      return;
+    }
+
+    setActionLoading(true);
+    try {
+      await apiService.orders.assignAgent(order.id, selectedAgentId);
+      toast.success("Agent assigned successfully");
+      setSelectedAgentId("");
+      await fetchOrder();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || "Manual assignment failed");
     } finally {
       setActionLoading(false);
     }
@@ -120,6 +161,27 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
   };
   const total = charges.total ?? charges.totalCharge ?? 0;
   const assignedName = order.agent?.user?.name ?? order.agent?.name;
+  const availableAgents = agents.filter((agent) => agent.isAvailable);
+  const canAssign =
+    user?.role === "ADMIN" &&
+    !order.agentId &&
+    !["DELIVERED", "FAILED"].includes(order.status);
+  const hasPickupCoordinates =
+    Number.isFinite(order.pickupLat) && Number.isFinite(order.pickupLng);
+  const agentOptions = [
+    {
+      value: "",
+      label: agentsLoading
+        ? "LOADING AVAILABLE AGENTS…"
+        : availableAgents.length
+          ? "SELECT AVAILABLE AGENT"
+          : "NO AVAILABLE AGENTS",
+    },
+    ...availableAgents.map((agent) => ({
+      value: agent.id,
+      label: `${agent.user?.name ?? "Unnamed agent"}${agent.zone?.name ? ` · ${agent.zone.name}` : ""}`,
+    })),
+  ];
 
   return (
     <div className="flex flex-col gap-5 sm:gap-6">
@@ -144,11 +206,6 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {user?.role === "ADMIN" && order.status === "CONFIRMED" && (
-              <Button disabled={actionLoading} onClick={handleAutoAssign}>
-                {actionLoading ? "ASSIGNING…" : "AUTO-ASSIGN AGENT"}
-              </Button>
-            )}
             {user?.role === "AGENT" && order.status === "ASSIGNED" && (
               <Button
                 disabled={actionLoading}
@@ -281,6 +338,44 @@ export default function OrderDetail({ params }: { params: { id: string } }) {
                 {order.agentId ? "ASSIGNED" : "UNASSIGNED"}
               </span>
             </div>
+
+            {canAssign && (
+              <div className="mt-5 border-t-4 border-neo-black pt-4">
+                <p className="mb-3 font-mono text-xs font-black uppercase tracking-widest">
+                  Assign delivery agent
+                </p>
+                <div className="grid grid-cols-1 gap-3 lg:grid-cols-[minmax(260px,1fr)_auto_auto] lg:items-end">
+                  <Select
+                    label="Available agent"
+                    options={agentOptions}
+                    value={selectedAgentId}
+                    disabled={agentsLoading || availableAgents.length === 0}
+                    onChange={(event) => setSelectedAgentId(event.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    disabled={actionLoading || !selectedAgentId}
+                    onClick={handleManualAssign}
+                  >
+                    {actionLoading ? "ASSIGNING…" : "MANUAL ASSIGN"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={actionLoading || !hasPickupCoordinates}
+                    onClick={handleAutoAssign}
+                  >
+                    AUTO ASSIGN NEAREST
+                  </Button>
+                </div>
+                {!hasPickupCoordinates && (
+                  <p className="mt-3 border-2 border-neo-black bg-neo-yellow px-3 py-2 font-mono text-xs font-bold">
+                    Auto-assignment needs pickup coordinates. Manual assignment
+                    is available now.
+                  </p>
+                )}
+              </div>
+            )}
           </Card>
         </div>
       </section>
