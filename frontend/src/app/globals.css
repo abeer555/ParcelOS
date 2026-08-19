@@ -3,8 +3,32 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --color-black: #000000;
+    --color-white: #FFFFFF;
+    --color-yellow: #FFD700;
+    --color-red: #FF3333;
+    --color-blue: #3366FF;
+    --color-green: #33CC66;
+    --color-orange: #FF9933;
+    --color-gray: #F5F5F5;
+    --shadow-color: #000000;
+  }
+  
+  .dark {
+    --color-black: #FFFFFF;
+    --color-white: #1A1A1A;
+    --color-yellow: #CCAC00;
+    --color-red: #CC2929;
+    --color-blue: #2952CC;
+    --color-green: #29A352;
+    --color-orange: #CC7A29;
+    --color-gray: #0D0D0D;
+    --shadow-color: #FFFFFF;
+  }
+
   body {
-    @apply bg-neo-gray text-neo-black font-sans;
+    @apply bg-neo-gray text-neo-black font-sans transition-colors duration-200;
   }
   
   h1, h2, h3, h4, h5, h6 {

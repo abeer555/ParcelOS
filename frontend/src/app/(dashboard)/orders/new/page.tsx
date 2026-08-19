@@ -25,9 +25,14 @@ export default function CreateOrder() {
   const handleCalculate = async () => {
     try {
       const payload = {
-        pickupPincode: formData.pickupPincode, dropPincode: formData.dropPincode,
-        dimensions: { l: Number(formData.length), b: Number(formData.breadth), h: Number(formData.height) },
-        actualWeight: Number(formData.actualWeight), type: formData.type, paymentType: formData.paymentType
+        pickupPincode: formData.pickupPincode, 
+        dropPincode: formData.dropPincode,
+        packageLength: Number(formData.length), 
+        packageBreadth: Number(formData.breadth), 
+        packageHeight: Number(formData.height),
+        actualWeight: Number(formData.actualWeight), 
+        orderType: formData.type, 
+        paymentType: formData.paymentType
       };
       const res = await apiService.orders.calculateCharge(payload);
       setChargeData(res.data);
@@ -41,9 +46,16 @@ export default function CreateOrder() {
     setLoading(true);
     try {
       const payload = {
-        ...formData,
-        dimensions: { l: Number(formData.length), b: Number(formData.breadth), h: Number(formData.height) },
-        actualWeight: Number(formData.actualWeight)
+        pickupAddress: formData.pickupAddress,
+        pickupPincode: formData.pickupPincode,
+        dropAddress: formData.dropAddress,
+        dropPincode: formData.dropPincode,
+        packageLength: Number(formData.length),
+        packageBreadth: Number(formData.breadth),
+        packageHeight: Number(formData.height),
+        actualWeight: Number(formData.actualWeight),
+        orderType: formData.type,
+        paymentType: formData.paymentType
       };
       const res = await apiService.orders.createOrder(payload);
       toast.success('Order created successfully!');

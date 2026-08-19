@@ -26,7 +26,7 @@ export default function LandingPage() {
           </p>
           <div className="flex gap-6">
             <Link href="/register">
-              <Button className="text-2xl py-4 px-8 bg-neo-yellow text-neo-black border-neo-black shadow-[8px_8px_0_0_#000] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">GET STARTED</Button>
+              <Button className="text-2xl py-4 px-8 bg-neo-yellow text-neo-black border-neo-black shadow-[8px_8px_0_0_var(--shadow-color)] hover:shadow-none hover:translate-x-[4px] hover:translate-y-[4px]">GET STARTED</Button>
             </Link>
           </div>
         </section>
