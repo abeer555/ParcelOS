@@ -1,39 +1,15 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Moon, Sun } from 'lucide-react';
 
 export default function LandingPage() {
-  const [dark, setDark] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('theme');
-    const isDark = stored === 'dark';
-    setDark(isDark);
-    document.documentElement.classList.toggle('dark', isDark);
-  }, []);
-
-  const toggleDark = () => {
-    const next = !dark;
-    setDark(next);
-    document.documentElement.classList.toggle('dark', next);
-    localStorage.setItem('theme', next ? 'dark' : 'light');
-  };
-
   return (
     <div className="min-h-screen flex flex-col">
       <header className="border-b-4 border-neo-black bg-neo-yellow p-6 flex justify-between items-center">
         <h1 className="text-3xl font-black text-neo-black">PARCEL_OS</h1>
         <div className="flex gap-4 items-center">
-          <button
-            onClick={toggleDark}
-            className="p-2 border-4 border-neo-black bg-neo-white hover:bg-neo-gray shadow-neo hover:shadow-none hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
-            aria-label="Toggle dark mode"
-          >
-            {dark ? <Sun size={20} className="text-neo-black" /> : <Moon size={20} className="text-neo-black" />}
-          </button>
           <Link href="/track">
             <Button variant="outline">Track Order</Button>
           </Link>
@@ -46,6 +22,14 @@ export default function LandingPage() {
       <main className="flex-1">
         <section className="bg-neo-blue text-neo-white border-b-4 border-neo-black p-20 text-center flex flex-col items-center">
           <h2 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter">SHIP. TRACK.<br/>DELIVER.</h2>
+          <a
+            href="https://abeer.codes"
+            target="_blank"
+            rel="noreferrer"
+            className="mb-6 border-4 border-neo-white bg-neo-black px-4 py-2 font-mono text-sm font-black uppercase tracking-[0.18em] shadow-neo hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none"
+          >
+            Portfolio: abeer.codes
+          </a>
           <p className="text-xl max-w-2xl font-mono bg-neo-black p-4 mb-10 border-4 border-neo-white">
             ParcelOS — a full-stack last-mile delivery platform. Manage zones, rate cards, agents, and real-time order tracking from a single dashboard.
           </p>

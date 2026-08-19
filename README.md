@@ -1,8 +1,10 @@
 # ParcelOS - Last-Mile Delivery Tracker
 
-This app is fully deployed and live on https://parcelos.t0r.tech/
-Frontend - Vercel
-Backend - Render
+ParcelOS is fully deployed and available at [parcelos.t0r.tech](https://parcelos.t0r.tech/).
+
+- **Frontend:** Vercel
+- **Backend:** Render
+
 Database - Neon
 ## Admin Dashboard
 <img width="1920" height="1154" alt="image" src="https://github.com/user-attachments/assets/1c64934f-f5b2-4ed0-b5e3-5b2c58650b27" />

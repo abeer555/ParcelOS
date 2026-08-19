@@ -17,20 +17,6 @@
         --shadow-color: #1d1c19;
     }
 
-    .dark {
-        color-scheme: dark;
-        --color-black: #f2eee4;
-        --color-white: #23221f;
-        --color-yellow: #e0b43a;
-        --color-red: #e06b67;
-        --color-blue: #7896bb;
-        --color-green: #73ad88;
-        --color-orange: #d59161;
-        --color-gray: #171715;
-        --color-muted: #39362f;
-        --shadow-color: #090908;
-    }
-
     *,
     *::before,
     *::after {
