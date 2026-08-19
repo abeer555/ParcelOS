@@ -66,6 +66,22 @@ router.post(
       const charge = await calculateCharge(req.body);
       const orderNumber = generateOrderNumber();
 
+      const [pickupArea, dropArea] = await Promise.all([
+        prisma.area.findUnique({
+          where: { pincode: data.pickupPincode },
+          select: { lat: true, lng: true },
+        }),
+        prisma.area.findUnique({
+          where: { pincode: data.dropPincode },
+          select: { lat: true, lng: true },
+        }),
+      ]);
+
+      const pickupLat = data.pickupLat ?? pickupArea?.lat;
+      const pickupLng = data.pickupLng ?? pickupArea?.lng;
+      const dropLat = data.dropLat ?? dropArea?.lat;
+      const dropLng = data.dropLng ?? dropArea?.lng;
+
       const order = await prisma.order.create({
         data: {
           orderNumber,
@@ -73,12 +89,12 @@ router.post(
           customerId: req.user!.id,
           pickupAddress: data.pickupAddress,
           pickupPincode: data.pickupPincode,
-          pickupLat: data.pickupLat,
-          pickupLng: data.pickupLng,
+          pickupLat,
+          pickupLng,
           dropAddress: data.dropAddress,
           dropPincode: data.dropPincode,
-          dropLat: data.dropLat,
-          dropLng: data.dropLng,
+          dropLat,
+          dropLng,
           packageLength: data.packageLength,
           packageBreadth: data.packageBreadth,
           packageHeight: data.packageHeight,
@@ -152,7 +168,41 @@ router.get("/:id", verifyToken, async (req, res, next) => {
       throw new AppError("Forbidden", 403);
     }
 
-    res.json(order);
+    let pickupLat = order.pickupLat;
+    let pickupLng = order.pickupLng;
+    let dropLat = order.dropLat;
+    let dropLng = order.dropLng;
+
+    if (
+      pickupLat == null ||
+      pickupLng == null ||
+      dropLat == null ||
+      dropLng == null
+    ) {
+      const [pickupArea, dropArea] = await Promise.all([
+        prisma.area.findUnique({
+          where: { pincode: order.pickupPincode },
+          select: { lat: true, lng: true },
+        }),
+        prisma.area.findUnique({
+          where: { pincode: order.dropPincode },
+          select: { lat: true, lng: true },
+        }),
+      ]);
+
+      pickupLat = pickupLat ?? pickupArea?.lat ?? null;
+      pickupLng = pickupLng ?? pickupArea?.lng ?? null;
+      dropLat = dropLat ?? dropArea?.lat ?? null;
+      dropLng = dropLng ?? dropArea?.lng ?? null;
+    }
+
+    res.json({
+      ...order,
+      pickupLat,
+      pickupLng,
+      dropLat,
+      dropLng,
+    });
   } catch (err) {
     next(err);
   }
