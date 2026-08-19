@@ -1,0 +1,166 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  AGENT
+  ADMIN
+}
+
+enum OrderType {
+  B2B
+  B2C
+}
+
+enum PaymentType {
+  PREPAID
+  COD
+}
+
+enum OrderStatus {
+  CREATED
+  CONFIRMED
+  ASSIGNED
+  PICKED_UP
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  FAILED
+  RESCHEDULED
+}
+
+model User {
+  id           String        @id @default(uuid()) @db.Uuid
+  email        String        @unique
+  password     String
+  name         String
+  phone        String?
+  role         Role          @default(CUSTOMER)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  orders       Order[]
+  agentProfile AgentProfile?
+
+  @@index([email])
+}
+
+model AgentProfile {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @unique @db.Uuid
+  user           User     @relation(fields: [userId], references: [id])
+  currentLat     Float?
+  currentLng     Float?
+  isAvailable    Boolean  @default(true)
+  zoneId         String?  @db.Uuid
+  zone           Zone?    @relation(fields: [zoneId], references: [id])
+  assignedOrders Order[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([zoneId])
+  @@index([isAvailable])
+}
+
+model Zone {
+  id               String         @id @default(uuid()) @db.Uuid
+  name             String         @unique
+  areas            Area[]
+  agents           AgentProfile[]
+  rateCardsOrigin  RateCard[]     @relation("ZoneOrigin")
+  rateCardsDest    RateCard[]     @relation("ZoneDest")
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+model Area {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  pincode   String   @unique
+  zoneId    String   @db.Uuid
+  zone      Zone     @relation(fields: [zoneId], references: [id])
+  lat       Float
+  lng       Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([pincode])
+  @@index([zoneId])
+}
+
+model RateCard {
+  id                String    @id @default(uuid()) @db.Uuid
+  zoneId            String    @db.Uuid
+  zone              Zone      @relation("ZoneOrigin", fields: [zoneId], references: [id])
+  destinationZoneId String    @db.Uuid
+  destinationZone   Zone      @relation("ZoneDest", fields: [destinationZoneId], references: [id])
+  orderType         OrderType
+  ratePerKg         Float
+  baseRate          Float
+  codSurcharge      Float     @default(0)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  @@unique([zoneId, destinationZoneId, orderType])
+}
+
+model Order {
+  id               String            @id @default(uuid()) @db.Uuid
+  orderNumber      String            @unique
+  idempotencyKey   String?           @unique
+  customerId       String            @db.Uuid
+  customer         User              @relation(fields: [customerId], references: [id])
+  agentId          String?           @db.Uuid
+  agent            AgentProfile?     @relation(fields: [agentId], references: [id])
+  pickupAddress    String
+  pickupPincode    String
+  pickupLat        Float?
+  pickupLng        Float?
+  dropAddress      String
+  dropPincode      String
+  dropLat          Float?
+  dropLng          Float?
+  packageLength    Float
+  packageBreadth   Float
+  packageHeight    Float
+  actualWeight     Float
+  volumetricWeight Float
+  billableWeight   Float
+  orderType        OrderType
+  paymentType      PaymentType
+  baseCharge       Float
+  weightCharge     Float
+  codSurcharge     Float             @default(0)
+  totalCharge      Float
+  status           OrderStatus       @default(CREATED)
+  scheduledDate    DateTime?
+  rescheduledDate  DateTime?
+  failureReason    String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  trackingHistory  TrackingEvent[]
+
+  @@index([customerId])
+  @@index([agentId])
+  @@index([status])
+  @@index([pickupPincode])
+  @@index([dropPincode])
+}
+
+model TrackingEvent {
+  id          String      @id @default(uuid()) @db.Uuid
+  orderId     String      @db.Uuid
+  order       Order       @relation(fields: [orderId], references: [id])
+  status      OrderStatus
+  description String?
+  actor       String
+  actorRole   Role
+  createdAt   DateTime    @default(now())
+
+  @@index([orderId])
+}
