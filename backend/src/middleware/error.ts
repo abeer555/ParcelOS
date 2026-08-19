@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/errors';
 import { ZodError } from 'zod';
+import { Prisma } from '@prisma/client';
 
 export const errorHandler = (
   err: Error,
@@ -20,6 +21,29 @@ export const errorHandler = (
       status: 'error',
       message: 'Validation Error',
       errors: err.errors,
+    });
+  }
+
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    if (err.code === 'P2002') {
+      return res.status(409).json({
+        status: 'error',
+        message: 'A record with this value already exists.',
+      });
+    }
+
+    if (err.code === 'P2021') {
+      return res.status(500).json({
+        status: 'error',
+        message: 'Database schema is missing. Run Prisma schema sync on the deployed database.',
+      });
+    }
+  }
+
+  if (err instanceof Prisma.PrismaClientInitializationError) {
+    return res.status(500).json({
+      status: 'error',
+      message: 'Database connection failed. Verify DATABASE_URL and database network access.',
     });
   }
 

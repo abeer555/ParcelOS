@@ -1,6 +1,6 @@
-import { Resend } from 'resend';
-import { env } from '../config/env';
-import { OrderStatus } from '@prisma/client';
+import { Resend } from "resend";
+import { env } from "../config/env";
+import { OrderStatus } from "@prisma/client";
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
@@ -8,10 +8,12 @@ export const sendStatusNotification = async (
   email: string,
   orderNumber: string,
   status: OrderStatus,
-  details?: string
+  details?: string,
 ) => {
   if (!resend) {
-    console.warn(`Resend API key missing. Mock sending email to ${email} for order ${orderNumber} - Status: ${status}`);
+    console.warn(
+      `Resend API key missing. Mock sending email to ${email} for order ${orderNumber} - Status: ${status}`,
+    );
     return;
   }
 
@@ -36,12 +38,12 @@ export const sendStatusNotification = async (
 
   try {
     await resend.emails.send({
-      from: 'ParcelOS <noreply@parcelos.com>',
+      from: env.RESEND_FROM_EMAIL || "ParcelOS <onboarding@resend.dev>",
       to: email,
       subject,
       html,
     });
   } catch (error) {
-    console.error('Failed to send email notification:', error);
+    console.error("Failed to send email notification:", error);
   }
 };

@@ -2,7 +2,7 @@ services:
   - type: web
     name: parcel-os-api
     runtime: node
-    buildCommand: npm ci && npx prisma generate && npm run build
+    buildCommand: npm ci && npm run prisma:generate && npm run prisma:push && npm run build
     startCommand: npm start
     envVars:
       - key: DATABASE_URL
