@@ -1,8 +1,22 @@
-import React from 'react';
+import React from "react";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-export const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => {
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+type CardProps = React.HTMLAttributes<HTMLDivElement>;
+
+export const Card = ({ children, className, ...props }: CardProps) => {
   return (
-    <div className={`bg-neo-white border-4 border-neo-black shadow-neo p-6 ${className}`}>
+    <div
+      className={cn(
+        "border-2 border-neo-black bg-neo-white p-4 text-neo-black shadow-neo sm:p-5 lg:p-6",
+        className,
+      )}
+      {...props}
+    >
       {children}
     </div>
   );

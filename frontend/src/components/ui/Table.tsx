@@ -1,20 +1,49 @@
-import React from 'react';
+import React from "react";
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-export const Table = ({ headers, children }: { headers: string[], children: React.ReactNode }) => {
+function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+
+interface TableProps {
+  headers: string[];
+  children: React.ReactNode;
+  className?: string;
+  label?: string;
+}
+
+export const Table = ({ headers, children, className, label }: TableProps) => {
   return (
-    <div className="overflow-x-auto border-4 border-neo-black shadow-neo bg-neo-white">
-      <table className="w-full text-left border-collapse">
-        <thead>
-          <tr className="bg-neo-yellow border-b-4 border-neo-black font-mono uppercase">
-            {headers.map((h, i) => (
-              <th key={i} className="p-4 border-r-4 border-neo-black last:border-r-0">{h}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="font-sans">
-          {children}
-        </tbody>
-      </table>
+    <div
+      className={cn(
+        "max-w-full overflow-hidden border-2 border-neo-black bg-neo-white shadow-neo",
+        className,
+      )}
+    >
+      <div className="overflow-x-auto overscroll-x-contain">
+        <table
+          className="w-full min-w-max border-collapse text-left"
+          aria-label={label}
+        >
+          <thead>
+            <tr className="border-b-3 border-neo-black bg-neo-yellow font-mono text-xs font-bold uppercase tracking-wide text-neo-black">
+              {headers.map((header) => (
+                <th
+                  key={header}
+                  scope="col"
+                  className="whitespace-nowrap border-r-2 border-neo-black px-3 py-3 last:border-r-0 sm:px-4"
+                >
+                  {header}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="font-sans text-sm text-neo-black [&_tr:last-child]:border-b-0">
+            {children}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
