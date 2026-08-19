@@ -10,7 +10,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   ({ className, label, error, options, ...props }, ref) => {
     return (
       <div className="flex flex-col gap-1 w-full">
-        {label && <label className="font-mono font-bold uppercase text-sm">{label}</label>}
+        {label && <label className="font-mono font-bold uppercase text-sm text-neo-black">{label}</label>}
         <select
           ref={ref}
           className={`px-4 py-2 border-4 border-neo-black rounded-none bg-neo-white focus:outline-none focus:ring-2 focus:ring-neo-yellow font-sans appearance-none ${className}`}

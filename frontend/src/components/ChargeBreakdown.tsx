@@ -23,7 +23,7 @@ export const ChargeBreakdownDisplay = ({ data }: { data: ChargeBreakdownType }) 
         )}
         <div className="flex justify-between border-t-4 border-neo-black pt-2 mt-2 font-bold text-xl">
           <span>Total:</span>
-          <span>${data.total.toFixed(2)}</span>
+          <span>${data.totalCharge.toFixed(2)}</span>
         </div>
       </div>
     </Card>

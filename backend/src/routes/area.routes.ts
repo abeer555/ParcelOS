@@ -6,7 +6,6 @@ import { verifyToken, authorize } from '../middleware/auth';
 import { AppError, NotFoundError } from '../utils/errors';
 
 const router = Router();
-router.use(verifyToken, authorize('ADMIN'));
 
 const areaSchema = z.object({
   body: z.object({
@@ -34,7 +33,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.post('/', validate(areaSchema), async (req, res, next) => {
+router.post('/', verifyToken, authorize('ADMIN'), validate(areaSchema), async (req, res, next) => {
   try {
     const data = req.body;
     const existing = await prisma.area.findUnique({ where: { pincode: data.pincode } });
@@ -47,7 +46,7 @@ router.post('/', validate(areaSchema), async (req, res, next) => {
   }
 });
 
-router.put('/:id', validate(areaSchema), async (req, res, next) => {
+router.put('/:id', verifyToken, authorize('ADMIN'), validate(areaSchema), async (req, res, next) => {
   try {
     const area = await prisma.area.update({
       where: { id: req.params.id },
@@ -59,7 +58,7 @@ router.put('/:id', validate(areaSchema), async (req, res, next) => {
   }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', verifyToken, authorize('ADMIN'), async (req, res, next) => {
   try {
     await prisma.area.delete({ where: { id: req.params.id } });
     res.status(204).send();
