@@ -1,5 +1,38 @@
 # ParcelOS - Last-Mile Delivery Tracker
 
+This app is fully deployed and live on https://parcelos.t0r.tech/
+Frontend - Vercel
+Backend - Render
+Database - Neon
+## Admin Dashboard
+<img width="1920" height="1154" alt="image" src="https://github.com/user-attachments/assets/1c64934f-f5b2-4ed0-b5e3-5b2c58650b27" />
+<img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/89aaf49b-1241-4a59-99f6-66b77ff1c77f" />
+<img width="1920" height="1154" alt="image" src="https://github.com/user-attachments/assets/666cfeee-c5df-4a9b-96da-21696d4e0b54" />
+
+## Agent Dashboard
+<img width="1920" height="1157" alt="image" src="https://github.com/user-attachments/assets/f3b9f769-794c-41b4-a5e2-24dddcebdd2a" />
+<img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/2e8ee830-4be3-481a-8fd9-974caeb38f6d" />
+<img width="1920" height="1149" alt="image" src="https://github.com/user-attachments/assets/a678c67b-8d1a-49c8-847a-2fd1a6797c74" />
+
+## Customer Dashboard
+<img width="1920" height="1149" alt="image" src="https://github.com/user-attachments/assets/15e015af-04ec-4c6e-8379-f5ce5fb40147" />
+<img width="1920" height="1150" alt="image" src="https://github.com/user-attachments/assets/2186052e-cb9a-4b5c-b482-ff1132bdd4de" />
+<img width="1920" height="1151" alt="image" src="https://github.com/user-attachments/assets/e6b66429-2aba-48a2-ae67-188ba7ed5939" />
+
+
+## Demo Videos 
+
+
+https://github.com/user-attachments/assets/403367e0-60d2-48f7-98be-4415c242ece9
+
+
+
+https://github.com/user-attachments/assets/95616175-fc86-4de4-a23f-126ce3b8a4be
+
+
+https://github.com/user-attachments/assets/ef4505fa-a7b9-4fba-82e2-c02d0234b77c
+
+
 ParcelOS is a production-grade last-mile delivery management platform designed for complex logistics operations. It handles dynamic pricing rules (rate calculation engine), intelligent agent auto-assignment using geospatial algorithms, robust order lifecycle tracking, and a neo-brutalist customer/admin dashboard.
 
 ## System Architecture
