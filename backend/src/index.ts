@@ -21,6 +21,9 @@ import adminRoutes from './routes/admin.routes';
 
 const app = express();
 
+// Render sits behind a reverse proxy; trust first hop so req.ip and rate limiting are correct.
+app.set('trust proxy', 1);
+
 app.use(helmet());
 app.use(cors({ origin: env.FRONTEND_URL || '*' }));
 app.use(express.json());
